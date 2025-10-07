@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Piafi - Çizim Tahtası</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #1a001f, #2b0033, #0d0014);
+      color: white;
+      text-align: center;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0d0014;
+      padding: 15px 30px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.7);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+      color: #c77dff;
+    }
+
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      gap: 20px;
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    nav ul li a:hover {
+      color: #c77dff;
+    }
+
+    .container {
+      margin-top: 20px;
+    }
+
+    #drawingBoard {
+      border: 3px solid #c77dff;
+      background: white;
+      margin-top: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255,204,0,0.5);
+      cursor: crosshair;
+    }
+
+    .toolbar {
+      margin-top: 15px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .toolbar button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      background: #c77dff;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+      transition: 0.3s;
+    }
+
+    .toolbar button:hover {
+      background: #ffcc00;
+      color: #111;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Piafi</h1>
+    <nav>
+      <ul>
+        <li><a href="sayfa.html">Ana Sayfa</a></li>
+        <li><a href="kaydedilenler.html">Kaydedilenler</a></li>
+        <li><a href="#">Ayarlar</a></li>
+        <li><a href="#">Hakkında</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h2>Çizim Tahtası</h2>
+    <canvas id="drawingBoard" width="600" height="400"></canvas>
+
+    <div class="toolbar">
+      <button onclick="setTool('pen')">Kalem</button>
+      <button onclick="setTool('eraser')">Silgi</button>
+      <button onclick="setTool('rect')">Dikdörtgen</button>
+      <button onclick="setTool('circle')">Daire</button>
+      <button onclick="saveDrawing()">Kaydet</button>
+      <button onclick="clearBoard()">Temizle</button>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("drawingBoard");
+    const ctx = canvas.getContext("2d");
+    let drawing = false;
+    let tool = "pen";
+    let startX, startY;
+    let tempImage = null; // önceden çizilmişi korumak için
+
+    function setTool(selected) {
+      tool = selected;
+    }
+
+    canvas.addEventListener("mousedown", (e) => {
+      drawing = true;
+      startX = e.offsetX;
+      startY = e.offsetY;
+      tempImage = ctx.getImageData(0, 0, canvas.width, canvas.height); // mevcut çizimi kaydet
+      if (tool === "pen" || tool === "eraser") {
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+      }
+    });
+
+    canvas.addEventListener("mousemove", (e) => {
+      if (!drawing) return;
+
+      if (tool === "pen") {
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 2;
+        ctx.lineTo(e.offsetX, e.offsetY);
+        ctx.stroke();
+      } 
+      else if (tool === "eraser") {
+        ctx.strokeStyle = "white";
+        ctx.lineWidth = 15;
+        ctx.lineTo(e.offsetX, e.offsetY);
+        ctx.stroke();
+      } 
+      else if (tool === "rect" || tool === "circle") {
+        ctx.putImageData(tempImage, 0, 0); // önceki çizimi geri yükle
+        let width = e.offsetX - startX;
+        let height = e.offsetY - startY;
+        ctx.strokeStyle = "rgba(0,0,0,0.8)";
+        ctx.lineWidth = 2;
+        if (tool === "rect") {
+          ctx.strokeRect(startX, startY, width, height);
+        } else if (tool === "circle") {
+          let radius = Math.sqrt(width * width + height * height);
+          ctx.beginPath();
+          ctx.arc(startX, startY, radius, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      }
+    });
+
+    canvas.addEventListener("mouseup", (e) => {
+      drawing = false;
+    });
+
+    function saveDrawing() {
+      const dataURL = canvas.toDataURL("image/png");
+      let saved = JSON.parse(localStorage.getItem("savedDrawings")) || [];
+      saved.push(dataURL);
+      localStorage.setItem("savedDrawings", JSON.stringify(saved));
+      alert("Çizim kaydedildi! Kaydedilenler sayfasına gidebilirsin.");
+    }
+
+    function clearBoard() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  </script>
+</body>
+</html>
