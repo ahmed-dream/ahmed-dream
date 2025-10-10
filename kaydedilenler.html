@@ -18,13 +18,16 @@
       justify-content: space-between;
       align-items: center;
       background: #0d0014;
-      padding: 15px 30px;
+      padding: 15px 25px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.7);
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
 
     header h1 {
       margin: 0;
-      font-size: 24px;
+      font-size: 22px;
       color: #c77dff;
     }
 
@@ -47,12 +50,44 @@
       color: #c77dff;
     }
 
+    /* Mobil menü */
+    .menu-toggle {
+      display: none;
+      font-size: 28px;
+      cursor: pointer;
+      color: white;
+    }
+
+    @media (max-width: 768px) {
+      nav ul {
+        display: none;
+        flex-direction: column;
+        background: #0d0014;
+        width: 100%;
+        padding: 10px 0;
+      }
+
+      nav ul.active {
+        display: flex;
+      }
+
+      .menu-toggle {
+        display: block;
+      }
+    }
+
+    h2 {
+      margin-top: 25px;
+      color: #ffccff;
+    }
+
     .gallery {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       gap: 20px;
-      margin-top: 30px;
+      margin: 25px auto 40px;
+      padding: 0 10px;
     }
 
     .drawing-card {
@@ -60,7 +95,13 @@
       padding: 15px;
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(255,255,255,0.2);
-      width: 300px;
+      width: 280px;
+      max-width: 90%;
+      transition: transform 0.3s ease;
+    }
+
+    .drawing-card:hover {
+      transform: scale(1.02);
     }
 
     .drawing-card img {
@@ -71,28 +112,45 @@
     }
 
     .drawing-card button {
-      margin: 8px;
-      padding: 6px 12px;
+      margin: 8px 5px;
+      padding: 8px 14px;
       background: #c77dff;
       border: none;
       border-radius: 6px;
       color: white;
       cursor: pointer;
       transition: 0.3s;
+      font-size: 15px;
     }
 
     .drawing-card button:hover {
       background: #ffcc00;
       color: #111;
     }
+
+    @media (max-width: 480px) {
+      header h1 {
+        font-size: 20px;
+      }
+
+      .drawing-card {
+        width: 95%;
+      }
+
+      .drawing-card button {
+        padding: 10px 16px;
+        font-size: 16px;
+      }
+    }
   </style>
 </head>
 <body>
   <header>
     <h1>Piafi</h1>
+    <span class="menu-toggle" id="menuToggle">☰</span>
     <nav>
-      <ul>
-        <li><a href="sayfa.html">Ana Sayfa</a></li>
+      <ul id="menuList">
+        <li><a href="index.html">Ana Sayfa</a></li>
         <li><a href="kaydedilenler.html">Kaydedilenler</a></li>
       </ul>
     </nav>
@@ -102,8 +160,15 @@
   <div class="gallery" id="gallery"></div>
 
   <script>
+    // Menü aç/kapa (mobil)
+    const menuToggle = document.getElementById("menuToggle");
+    const menuList = document.getElementById("menuList");
+    menuToggle.addEventListener("click", () => {
+      menuList.classList.toggle("active");
+    });
+
     const gallery = document.getElementById("gallery");
-    const saved = JSON.parse(localStorage.getItem("savedDrawings")) || [];
+    const saved = JSON.parse(localStorage.getItem("drawings")) || []; // index.html’deki ile aynı anahtar
 
     if (saved.length === 0) {
       gallery.innerHTML = "<p>Henüz bir çizim kaydedilmedi.</p>";
@@ -128,7 +193,7 @@
         deleteBtn.textContent = "Sil";
         deleteBtn.onclick = () => {
           saved.splice(index, 1);
-          localStorage.setItem("savedDrawings", JSON.stringify(saved));
+          localStorage.setItem("drawings", JSON.stringify(saved));
           location.reload();
         };
 
