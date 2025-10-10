@@ -166,7 +166,9 @@
     function getPos(e) {
       const rect = canvas.getBoundingClientRect();
       if (e.touches) {
-        return { x: e.touches[0].clientX - rect.left, y: e.touches[0].clientY - rect.top };
+        const x = e.touches[0].clientX - rect.left;
+        const y = e.touches[0].clientY - rect.top;
+        return { x, y };
       } else {
         return { x: e.offsetX, y: e.offsetY };
       }
@@ -242,3 +244,4 @@
   </script>
 </body>
 </html>
+
