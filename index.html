@@ -3,9 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Piafi — Hayal ettiğiniz görseli çizerek bulmanızı sağlayan demo uygulama.">
   <title>Piafi - Çizim Tahtası</title>
-
   <style>
     body {
       margin: 0;
@@ -13,7 +11,6 @@
       background: linear-gradient(135deg, #1a001f, #2b0033, #0d0014);
       color: white;
       text-align: center;
-      overflow-x: hidden;
     }
 
     header {
@@ -21,69 +18,55 @@
       justify-content: space-between;
       align-items: center;
       background: #0d0014;
-      padding: 15px 20px;
+      padding: 10px 20px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.7);
-      position: sticky;
-      top: 0;
-      z-index: 10;
+      position: relative;
     }
 
     header h1 {
       margin: 0;
       font-size: 24px;
       color: #c77dff;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
     }
 
-    nav ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
+    /* Menü butonu */
+    .menu-btn {
+      font-size: 26px;
+      cursor: pointer;
+      color: white;
+      background: none;
+      border: none;
+    }
+
+    nav {
+      display: none;
+      flex-direction: column;
+      position: absolute;
+      top: 60px;
+      left: 10px;
+      background: #1a001f;
+      border-radius: 10px;
+      padding: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    }
+
+    nav.show {
       display: flex;
-      gap: 20px;
     }
 
-    nav ul li a {
+    nav a {
       text-decoration: none;
       color: white;
       font-weight: bold;
+      margin: 5px 0;
       transition: 0.3s;
     }
 
-    nav ul li a:hover {
+    nav a:hover {
       color: #c77dff;
-    }
-
-    /* Mobil Menü */
-    .menu-toggle {
-      display: none;
-      font-size: 26px;
-      cursor: pointer;
-      background: none;
-      border: none;
-      color: white;
-    }
-
-    @media (max-width: 768px) {
-      nav ul {
-        display: none;
-        flex-direction: column;
-        background: #1a001f;
-        position: absolute;
-        top: 60px;
-        right: 10px;
-        width: 200px;
-        border: 2px solid #c77dff;
-        border-radius: 10px;
-        padding: 10px 0;
-      }
-
-      nav ul.show {
-        display: flex;
-      }
-
-      .menu-toggle {
-        display: block;
-      }
     }
 
     .container {
@@ -97,19 +80,19 @@
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(255,204,0,0.5);
       cursor: crosshair;
-      max-width: 95%;
+      touch-action: none;
     }
 
     .toolbar {
       margin-top: 15px;
       display: flex;
-      flex-wrap: wrap;
       justify-content: center;
-      gap: 12px;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
     .toolbar button {
-      padding: 6px 12px;
+      padding: 8px 14px;
       border: none;
       border-radius: 6px;
       background: #c77dff;
@@ -123,20 +106,25 @@
       background: #ffcc00;
       color: #111;
     }
+
+    /* Mobil uyum */
+    @media (max-width: 768px) {
+      #drawingBoard {
+        width: 90vw;
+        height: 60vh;
+      }
+    }
   </style>
 </head>
-
 <body>
   <header>
+    <button class="menu-btn" onclick="toggleMenu()">☰</button>
     <h1>Piafi</h1>
-    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
-    <nav>
-      <ul id="menuList">
-        <li><a href="index.html">Ana Sayfa</a></li>
-        <li><a href="kaydedilenler.html">Kaydedilenler</a></li>
-        <li><a href="#">Ayarlar</a></li>
-        <li><a href="#">Hakkında</a></li>
-      </ul>
+    <nav id="mobileNav">
+      <a href="index.html">Ana Sayfa</a>
+      <a href="kaydedilenler.html">Kaydedilenler</a>
+      <a href="#">Ayarlar</a>
+      <a href="#">Hakkında</a>
     </nav>
   </header>
 
@@ -155,9 +143,9 @@
   </div>
 
   <script>
-    // Menü aç/kapa
+    // Menü
     function toggleMenu() {
-      document.getElementById("menuList").classList.toggle("show");
+      document.getElementById("mobileNav").classList.toggle("show");
     }
 
     const canvas = document.getElementById("drawingBoard");
@@ -167,23 +155,24 @@
     let startX, startY;
     let tempImage = null;
 
+    function setTool(selected) {
+      tool = selected;
+    }
+
+    // Hem fare hem dokunmatik desteği
     function getPos(e) {
       if (e.touches) {
-        const rect = canvas.getBoundingClientRect();
         return {
-          x: e.touches[0].clientX - rect.left,
-          y: e.touches[0].clientY - rect.top
+          x: e.touches[0].clientX - canvas.getBoundingClientRect().left,
+          y: e.touches[0].clientY - canvas.getBoundingClientRect().top
         };
       } else {
         return { x: e.offsetX, y: e.offsetY };
       }
     }
 
-    function setTool(selected) {
-      tool = selected;
-    }
-
     function startDraw(e) {
+      e.preventDefault();
       drawing = true;
       const pos = getPos(e);
       startX = pos.x;
@@ -197,6 +186,7 @@
 
     function draw(e) {
       if (!drawing) return;
+      e.preventDefault();
       const pos = getPos(e);
 
       if (tool === "pen") {
@@ -204,23 +194,21 @@
         ctx.lineWidth = 2;
         ctx.lineTo(pos.x, pos.y);
         ctx.stroke();
-      } 
-      else if (tool === "eraser") {
+      } else if (tool === "eraser") {
         ctx.strokeStyle = "white";
         ctx.lineWidth = 15;
         ctx.lineTo(pos.x, pos.y);
         ctx.stroke();
-      } 
-      else if (tool === "rect" || tool === "circle") {
+      } else if (tool === "rect" || tool === "circle") {
         ctx.putImageData(tempImage, 0, 0);
-        let width = pos.x - startX;
-        let height = pos.y - startY;
-        ctx.strokeStyle = "rgba(0,0,0,0.8)";
+        const width = pos.x - startX;
+        const height = pos.y - startY;
+        ctx.strokeStyle = "black";
         ctx.lineWidth = 2;
         if (tool === "rect") {
           ctx.strokeRect(startX, startY, width, height);
-        } else if (tool === "circle") {
-          let radius = Math.sqrt(width * width + height * height);
+        } else {
+          const radius = Math.sqrt(width * width + height * height);
           ctx.beginPath();
           ctx.arc(startX, startY, radius, 0, Math.PI * 2);
           ctx.stroke();
@@ -232,20 +220,11 @@
       drawing = false;
     }
 
-    // 🖱️ Fare olayları
     canvas.addEventListener("mousedown", startDraw);
     canvas.addEventListener("mousemove", draw);
     canvas.addEventListener("mouseup", stopDraw);
-
-    // 📱 Dokunmatik olaylar
-    canvas.addEventListener("touchstart", (e) => {
-      e.preventDefault();
-      startDraw(e);
-    });
-    canvas.addEventListener("touchmove", (e) => {
-      e.preventDefault();
-      draw(e);
-    });
+    canvas.addEventListener("touchstart", startDraw);
+    canvas.addEventListener("touchmove", draw);
     canvas.addEventListener("touchend", stopDraw);
 
     function saveDrawing() {
@@ -253,7 +232,8 @@
       let saved = JSON.parse(localStorage.getItem("savedDrawings")) || [];
       saved.push(dataURL);
       localStorage.setItem("savedDrawings", JSON.stringify(saved));
-      alert("Çizim kaydedildi! Kaydedilenler sayfasına gidebilirsin.");
+      alert("Çizim kaydedildi!");
+      window.location.href = "kaydedilenler.html"; // otomatik yönlendir
     }
 
     function clearBoard() {
