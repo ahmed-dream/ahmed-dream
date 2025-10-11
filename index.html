@@ -85,6 +85,9 @@
       cursor: crosshair;
       touch-action: none;
       max-width: 95%;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .toolbar {
@@ -111,11 +114,11 @@
       color: #111;
     }
 
-    /* Mobil uyum */
     @media (max-width: 768px) {
       #drawingBoard {
         width: 90vw;
         height: 60vh;
+        background: white;
       }
     }
   </style>
@@ -165,13 +168,9 @@
 
     function getPos(e) {
       const rect = canvas.getBoundingClientRect();
-      if (e.touches) {
-        const x = e.touches[0].clientX - rect.left;
-        const y = e.touches[0].clientY - rect.top;
-        return { x, y };
-      } else {
-        return { x: e.offsetX, y: e.offsetY };
-      }
+      const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+      const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+      return { x, y };
     }
 
     function startDraw(e) {
@@ -234,7 +233,6 @@
       let saved = JSON.parse(localStorage.getItem("savedDrawings")) || [];
       saved.push(dataURL);
       localStorage.setItem("savedDrawings", JSON.stringify(saved));
-      alert("Çizim kaydedildi!");
       window.location.href = "kaydedilenler.html";
     }
 
@@ -244,4 +242,3 @@
   </script>
 </body>
 </html>
-
