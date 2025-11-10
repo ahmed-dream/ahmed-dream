@@ -228,13 +228,24 @@
     canvas.addEventListener("touchmove", draw);
     canvas.addEventListener("touchend", stopDraw);
 
-    function saveDrawing() {
-      const dataURL = canvas.toDataURL("image/png");
-      let saved = JSON.parse(localStorage.getItem("drawings")) || [];
-      saved.push(dataURL);
-      localStorage.setItem("drawings", JSON.stringify(saved));
-      alert("Çizim kaydedildi!");
-    }
+   function saveDrawing() {
+  const dataURL = canvas.toDataURL("image/png");
+  // Çizim tamamen boş mu kontrol et
+  const blank = document.createElement("canvas");
+  blank.width = canvas.width;
+  blank.height = canvas.height;
+  if (dataURL === blank.toDataURL()) {
+    alert("Boş bir çizimi kaydedemezsin!");
+    return;
+  }
+
+  let saved = JSON.parse(localStorage.getItem("drawings")) || [];
+  saved.push(dataURL);
+  localStorage.setItem("drawings", JSON.stringify(saved));
+  alert("Çizim başarıyla kaydedildi!");
+  console.log("Kaydedilen çizim sayısı:", saved.length);
+}
+
 
     function clearBoard() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -262,3 +273,4 @@
   </script>
 </body>
 </html>
+
