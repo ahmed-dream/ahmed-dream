@@ -258,39 +258,46 @@
     function clearBoard() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
-
- // Demo tarzı görsel arama (sayfa içinde)
+// Google Görseller arama (sayfa içinde demo sonuçlar)
 function searchDrawing() {
-  const resultsDiv = document.getElementById("searchResults");
-  const grid = document.getElementById("resultsGrid");
+  // önce dokunma olaylarının engellenmesini durdur
+  setTimeout(() => {
+    const resultsDiv = document.getElementById("searchResults");
+    const grid = document.getElementById("resultsGrid");
 
-  // Eski sonuçları temizle
-  grid.innerHTML = "";
-  resultsDiv.style.display = "block";
+    // Menü veya çizim event’lerini engellememesi için dokunma olaylarını serbest bırak
+    document.body.style.touchAction = "auto";
 
-  // Bu kısım DEMO — gerçek arama değil
-  // Dilersen ileride API ile değiştirilebilir
-  const demoImages = [
-    "https://images.unsplash.com/photo-1508264165352-258859e62245?auto=format&fit=crop&w=400&q=60",
-    "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=400&q=60",
-    "https://images.unsplash.com/photo-1542365887-4abf2b88c0d3?auto=format&fit=crop&w=400&q=60",
-    "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=400&q=60",
-    "https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=400&q=60"
-  ];
+    // Eski sonuçları temizle
+    grid.innerHTML = "";
+    resultsDiv.style.display = "block";
 
-  demoImages.forEach(url => {
-    const img = document.createElement("img");
-    img.src = url;
-    img.style.width = "180px";
-    img.style.borderRadius = "10px";
-    img.style.border = "2px solid #c77dff";
-    img.style.boxShadow = "0 0 10px rgba(255,204,255,0.4)";
-    img.style.cursor = "pointer";
-    img.onclick = () => window.open(url, "_blank");
-    grid.appendChild(img);
-  });
+    // DEMO görseller (örnek)
+    const demoImages = [
+      "https://images.unsplash.com/photo-1508264165352-258859e62245?auto=format&fit=crop&w=400&q=60",
+      "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=400&q=60",
+      "https://images.unsplash.com/photo-1542365887-4abf2b88c0d3?auto=format&fit=crop&w=400&q=60",
+      "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=400&q=60",
+      "https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=400&q=60"
+    ];
+
+    demoImages.forEach(url => {
+      const img = document.createElement("img");
+      img.src = url;
+      img.style.width = "180px";
+      img.style.borderRadius = "10px";
+      img.style.border = "2px solid #c77dff";
+      img.style.boxShadow = "0 0 10px rgba(255,204,255,0.4)";
+      img.style.cursor = "pointer";
+      img.onclick = () => window.open(url, "_blank");
+      grid.appendChild(img);
+    });
+  }, 100);
+}
+
 }
     }
   </script>
 </body>
 </html>
+
