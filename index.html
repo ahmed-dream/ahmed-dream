@@ -110,6 +110,19 @@
       color: #111;
     }
 
+    #searchResults {
+      display: none;
+      margin-top: 30px;
+    }
+
+    #resultsGrid img {
+      width: 180px;
+      border-radius: 10px;
+      border: 2px solid #c77dff;
+      box-shadow: 0 0 10px rgba(255,204,255,0.4);
+      cursor: pointer;
+    }
+
     @media (max-width: 768px) {
       #drawingBoard {
         width: 90vw;
@@ -134,14 +147,6 @@
     <h2>Çizim Tahtası</h2>
     <canvas id="drawingBoard" width="600" height="400"></canvas>
 
-    <div id="searchResults" style="display:none; margin-top:30px;">
-  <h3>🔍 Benzer Görseller</h3>
-  <div id="resultsGrid" 
-       style="display:flex; flex-wrap:wrap; justify-content:center; gap:15px; margin-top:15px;">
-  </div>
-</div>
-
-
     <div class="toolbar">
       <button onclick="setTool('pen')">Kalem</button>
       <button onclick="setTool('eraser')">Silgi</button>
@@ -150,6 +155,11 @@
       <button onclick="saveDrawing()">Kaydet</button>
       <button onclick="clearBoard()">Temizle</button>
       <button onclick="searchDrawing()">Ara 🔍</button>
+    </div>
+
+    <div id="searchResults">
+      <h3>🔍 Benzer Görseller</h3>
+      <div id="resultsGrid" style="display:flex; flex-wrap:wrap; justify-content:center; gap:15px; margin-top:15px;"></div>
     </div>
   </div>
 
@@ -232,72 +242,52 @@
     canvas.addEventListener("mousedown", startDraw);
     canvas.addEventListener("mousemove", draw);
     canvas.addEventListener("mouseup", stopDraw);
+    canvas.addEventListener("mouseleave", stopDraw);
     canvas.addEventListener("touchstart", startDraw);
     canvas.addEventListener("touchmove", draw);
     canvas.addEventListener("touchend", stopDraw);
 
-   function saveDrawing() {
-  const dataURL = canvas.toDataURL("image/png");
-  // Çizim tamamen boş mu kontrol et
-  const blank = document.createElement("canvas");
-  blank.width = canvas.width;
-  blank.height = canvas.height;
-  if (dataURL === blank.toDataURL()) {
-    alert("Boş bir çizimi kaydedemezsin!");
-    return;
-  }
+    function saveDrawing() {
+      const dataURL = canvas.toDataURL("image/png");
+      const blank = document.createElement("canvas");
+      blank.width = canvas.width;
+      blank.height = canvas.height;
+      if (dataURL === blank.toDataURL()) {
+        alert("Boş bir çizimi kaydedemezsin!");
+        return;
+      }
 
-  let saved = JSON.parse(localStorage.getItem("drawings")) || [];
-  saved.push(dataURL);
-  localStorage.setItem("drawings", JSON.stringify(saved));
-  alert("Çizim başarıyla kaydedildi!");
-  console.log("Kaydedilen çizim sayısı:", saved.length);
-}
-
+      let saved = JSON.parse(localStorage.getItem("drawings")) || [];
+      saved.push(dataURL);
+      localStorage.setItem("drawings", JSON.stringify(saved));
+      alert("Çizim başarıyla kaydedildi!");
+    }
 
     function clearBoard() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      tempImage = null;
     }
-// Google Görseller arama (sayfa içinde demo sonuçlar)
-function searchDrawing() {
-  // önce dokunma olaylarının engellenmesini durdur
-  setTimeout(() => {
-    const resultsDiv = document.getElementById("searchResults");
-    const grid = document.getElementById("resultsGrid");
 
-    // Menü veya çizim event’lerini engellememesi için dokunma olaylarını serbest bırak
-    document.body.style.touchAction = "auto";
+    // Görsel arama (demo)
+    function searchDrawing() {
+      const resultsDiv = document.getElementById("searchResults");
+      const grid = document.getElementById("resultsGrid");
 
-    // Eski sonuçları temizle
-    grid.innerHTML = "";
-    resultsDiv.style.display = "block";
+      resultsDiv.style.display = "block";
+      grid.innerHTML = "";
 
-    // DEMO görseller (örnek)
-    const demoImages = [
-      "https://images.unsplash.com/photo-1508264165352-258859e62245?auto=format&fit=crop&w=400&q=60",
-      "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=400&q=60",
-      "https://images.unsplash.com/photo-1542365887-4abf2b88c0d3?auto=format&fit=crop&w=400&q=60",
-      "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=400&q=60",
-      "https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=400&q=60"
-    ];
+      // Her seferinde farklı rastgele resimler
+      const demoImages = Array.from({length: 6}, (_, i) =>
+        `https://source.unsplash.com/random/400x400?sig=${Math.random()}`
+      );
 
-    demoImages.forEach(url => {
-      const img = document.createElement("img");
-      img.src = url;
-      img.style.width = "180px";
-      img.style.borderRadius = "10px";
-      img.style.border = "2px solid #c77dff";
-      img.style.boxShadow = "0 0 10px rgba(255,204,255,0.4)";
-      img.style.cursor = "pointer";
-      img.onclick = () => window.open(url, "_blank");
-      grid.appendChild(img);
-    });
-  }, 100);
-}
-
-}
+      demoImages.forEach(url => {
+        const img = document.createElement("img");
+        img.src = url;
+        img.onclick = () => window.open(url, "_blank");
+        grid.appendChild(img);
+      });
     }
   </script>
 </body>
 </html>
-
