@@ -1,3 +1,4 @@
+// Menü aç/kapa
 function toggleMenu() {
   document.getElementById("mobileNav").classList.toggle("show");
 }
@@ -32,8 +33,6 @@ function startDraw(e) {
   if (tool === "pen" || tool === "eraser") {
     ctx.beginPath();
     ctx.moveTo(startX, startY);
-    ctx.lineJoin = "round";
-    ctx.lineCap = "round";
   }
 }
 
@@ -42,13 +41,12 @@ function draw(e) {
   e.preventDefault();
   const pos = getPos(e);
   if (tool === "pen") {
-    ctx.globalCompositeOperation = "source-over";
     ctx.strokeStyle = "black";
     ctx.lineWidth = 2;
     ctx.lineTo(pos.x, pos.y);
     ctx.stroke();
   } else if (tool === "eraser") {
-    ctx.globalCompositeOperation = "destination-out";
+    ctx.strokeStyle = "white";
     ctx.lineWidth = 15;
     ctx.lineTo(pos.x, pos.y);
     ctx.stroke();
@@ -76,7 +74,7 @@ canvas.addEventListener("mousemove", draw);
 canvas.addEventListener("mouseup", stopDraw);
 canvas.addEventListener("mouseleave", stopDraw);
 canvas.addEventListener("touchstart", startDraw);
-canvas.addEventListener("touchmove", e => { e.preventDefault(); draw(e); }, { passive: false });
+canvas.addEventListener("touchmove", draw);
 canvas.addEventListener("touchend", stopDraw);
 
 function saveDrawing() {
@@ -95,26 +93,16 @@ function saveDrawing() {
 }
 
 function clearBoard() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height); // ✅ doğru kullanım
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   tempImage = null;
 }
 
+// Görsel arama (demo)
 function searchDrawing() {
   const resultsDiv = document.getElementById("searchResults");
   const grid = document.getElementById("resultsGrid");
+
   resultsDiv.style.display = "block";
   grid.innerHTML = "";
 
-  // Şimdilik demo görseller (backend eklenince burası değişecek)
-  const demoImages = [
-    "images/cat1.jpg",
-    "images/dog1.jpg",
-    "images/tree1.jpg"
-  ];
-
-  demoImages.forEach(src => {
-    const img = document.createElement("img");
-    img.src = src;
-    grid.appendChild(img);
-  });
-}
+  const demoImages = Array.from({ length: 6 }, () =>
