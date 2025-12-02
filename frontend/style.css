@@ -1,0 +1,114 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #1a001f, #2b0033, #0d0014);
+  color: white;
+  text-align: center;
+  overflow-x: hidden;
+}
+
+header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  background: #0d0014;
+  padding: 10px 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.7);
+  position: relative;
+}
+
+header h1 {
+  margin: 0 auto;
+  font-size: 24px;
+  color: #c77dff;
+}
+
+.menu-btn {
+  font-size: 26px;
+  cursor: pointer;
+  color: white;
+  background: none;
+  border: none;
+  position: absolute;
+  left: 15px;
+  z-index: 11;
+}
+
+nav {
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  top: 60px;
+  left: 10px;
+  background: #1a001f;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+  z-index: 10;
+}
+
+nav.show { display: flex; }
+
+nav a {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  margin: 5px 0;
+  transition: 0.3s;
+}
+
+nav a:hover { color: #c77dff; }
+
+.container { margin-top: 20px; }
+
+#drawingBoard {
+  border: 3px solid #c77dff;
+  background: white;
+  margin-top: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(255,204,0,0.5);
+  cursor: crosshair;
+  touch-action: none;
+  max-width: 95%;
+}
+
+.toolbar {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.toolbar button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  background: #c77dff;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+.toolbar button:hover {
+  background: #ffcc00;
+  color: #111;
+}
+
+#searchResults {
+  display: none;
+  margin-top: 30px;
+}
+
+#resultsGrid img {
+  width: 180px;
+  border-radius: 10px;
+  border: 2px solid #c77dff;
+  box-shadow: 0 0 10px rgba(255,204,255,0.4);
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  #drawingBoard { width: 90vw; height: 60vh; }
+}
