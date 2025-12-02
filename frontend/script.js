@@ -95,4 +95,14 @@ function saveDrawing() {
 }
 
 function clearBoard() {
-  ctx.clear
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  tempImage = null;
+}
+
+function searchDrawing() {
+  const resultsDiv = document.getElementById("searchResults");
+  const grid = document.getElementById("resultsGrid");
+  resultsDiv.style.display = "block";
+  grid.innerHTML = "";
+
+  const demoImages =
