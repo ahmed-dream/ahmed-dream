@@ -101,6 +101,14 @@ nav a:hover { color: #c77dff; }
   margin-top: 30px;
 }
 
+#resultsGrid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 15px;
+}
+
 #resultsGrid img {
   width: 180px;
   border-radius: 10px;
