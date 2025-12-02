@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Piafi — Hayal ettiğiniz görseli çizerek bulmanızı sağlayan uygulama.">
+  <title>Piafi - Çizim Tahtası</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <button class="menu-btn" onclick="toggleMenu()">☰</button>
+    <h1>Piafi</h1>
+    <nav id="mobileNav">
+      <a href="index.html">Ana Sayfa</a>
+      <a href="kaydedilenler.html">Kaydedilenler</a>
+      <a href="#">Ayarlar</a>
+      <a href="#">Hakkında</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h2>Çizim Tahtası</h2>
+    <canvas id="drawingBoard" width="600" height="400"></canvas>
+
+    <div class="toolbar">
+      <button onclick="setTool('pen')">Kalem</button>
+      <button onclick="setTool('eraser')">Silgi</button>
+      <button onclick="setTool('rect')">Dikdörtgen</button>
+      <button onclick="setTool('circle')">Daire</button>
+      <button onclick="saveDrawing()">Kaydet</button>
+      <button onclick="clearBoard()">Temizle</button>
+      <button onclick="searchDrawing()">Ara 🔍</button>
+    </div>
+
+    <div id="searchResults">
+      <h3>🔍 Benzer Görseller</h3>
+      <div id="resultsGrid"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
