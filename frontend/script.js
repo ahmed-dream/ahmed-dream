@@ -105,4 +105,8 @@ function searchDrawing() {
   resultsDiv.style.display = "block";
   grid.innerHTML = "";
 
-  const demoImages = Array.from({ length: 6 }, () =>
+  const demoImages = Array.from({ length: 6 }, (_, i) => ({
+  id: i,
+  url: `https://source.unsplash.com/random/400x400?sig=${Math.random()}`,
+  title: `Demo Görsel ${i+1}`
+}));
