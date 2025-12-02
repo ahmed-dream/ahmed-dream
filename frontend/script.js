@@ -109,4 +109,4 @@ function searchDrawing() {
   id: i,
   url: `https://source.unsplash.com/random/400x400?sig=${Math.random()}`,
   title: `Demo Görsel ${i+1}`
-}));
+}))};
