@@ -95,7 +95,7 @@ function saveDrawing() {
 }
 
 function clearBoard() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0, 0, canvas.width, canvas.height); // ✅ doğru kullanım
   tempImage = null;
 }
 
@@ -105,4 +105,16 @@ function searchDrawing() {
   resultsDiv.style.display = "block";
   grid.innerHTML = "";
 
-  const demoImages =
+  // Şimdilik demo görseller (backend eklenince burası değişecek)
+  const demoImages = [
+    "images/cat1.jpg",
+    "images/dog1.jpg",
+    "images/tree1.jpg"
+  ];
+
+  demoImages.forEach(src => {
+    const img = document.createElement("img");
+    img.src = src;
+    grid.appendChild(img);
+  });
+}
