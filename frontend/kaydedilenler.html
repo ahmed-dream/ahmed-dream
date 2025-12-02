@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Piafi — Kaydedilen çizimlerinizi görüntüleyin.">
+  <title>Piafi - Kaydedilenler</title>
+  <!-- Ortak CSS dosyası -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <button class="menu-btn" onclick="toggleMenu()">☰</button>
+    <h1>Piafi</h1>
+    <nav id="mobileNav">
+      <a href="index.html">Ana Sayfa</a>
+      <a href="kaydedilenler.html">Kaydedilenler</a>
+      <a href="#">Ayarlar</a>
+      <a href="#">Hakkında</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h2>Kaydedilen Çizimler</h2>
+    <div id="savedDrawings" style="display:flex; flex-wrap:wrap; justify-content:center; gap:15px; margin-top:15px;"></div>
+  </div>
+
+  <!-- Ortak JS dosyası -->
+  <script src="script.js"></script>
+  <script>
+    // Kaydedilen çizimleri localStorage'dan yükle
+    function loadSavedDrawings() {
+      const saved = JSON.parse(localStorage.getItem("drawings")) || [];
+      const container = document.getElementById("savedDrawings");
+      container.innerHTML = "";
+
+      if (saved.length === 0) {
+        container.innerHTML = "<p>Henüz kaydedilmiş çizim yok.</p>";
+        return;
+      }
+
+      saved.forEach((dataURL, i) => {
+        const img = document.createElement("img");
+        img.src = dataURL;
+        img.alt = "Çizim " + (i+1);
+        img.style.width = "180px";
+        img.style.border = "2px solid #c77dff";
+        img.style.borderRadius = "10px";
+        img.style.boxShadow = "0 0 10px rgba(255,204,255,0.4)";
+        container.appendChild(img);
+      });
+    }
+
+    // Sayfa açıldığında çalıştır
+    window.onload = loadSavedDrawings;
+  </script>
+</body>
+</html>
