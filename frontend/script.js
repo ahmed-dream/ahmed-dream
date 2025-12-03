@@ -3,6 +3,7 @@ function toggleMenu() {
   document.getElementById("mobileNav").classList.toggle("show");
 }
 
+// Canvas ayarları
 const canvas = document.getElementById("drawingBoard");
 const ctx = canvas.getContext("2d");
 let drawing = false;
@@ -77,6 +78,7 @@ canvas.addEventListener("touchstart", startDraw);
 canvas.addEventListener("touchmove", draw);
 canvas.addEventListener("touchend", stopDraw);
 
+// Çizimi kaydet (backend'e)
 function saveDrawing() {
   const dataURL = canvas.toDataURL("image/png");
   const blank = document.createElement("canvas");
@@ -86,27 +88,84 @@ function saveDrawing() {
     alert("Boş bir çizimi kaydedemezsin!");
     return;
   }
-  let saved = JSON.parse(localStorage.getItem("drawings")) || [];
-  saved.push(dataURL);
-  localStorage.setItem("drawings", JSON.stringify(saved));
-  alert("Çizim başarıyla kaydedildi!");
+
+  const tags = prompt("Bu çizime bir etiket ekle (örn: çiçek, araba):");
+
+  fetch("http://localhost:3000/save", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ dataURL, tags })
+  })
+  .then(res => res.json())
+  .then(data => {
+    alert(data.message + "\nPaylaşım linki: http://localhost:3000/drawing/" + data.id);
+    window.location.href = "kaydedilenler.html";
+  })
+  .catch(err => console.error("Kaydetme hatası:", err));
 }
 
+// Çizim tahtasını temizle
 function clearBoard() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   tempImage = null;
 }
 
-// Görsel arama (demo)
+// Kaydedilenleri yükle (backend'den)
+function loadSavedDrawings() {
+  fetch("http://localhost:3000/drawings")
+    .then(res => res.json())
+    .then(saved => {
+      const container = document.getElementById("savedDrawings");
+      container.innerHTML = "";
+
+      if (!saved || saved.length === 0) {
+        container.innerHTML = "<p>Henüz kaydedilmiş çizim yok.</p>";
+        return;
+      }
+
+      saved.forEach((item, i) => {
+        const img = document.createElement("img");
+        img.src = item.dataURL;
+        img.alt = "Çizim " + (i+1);
+        img.style.width = "180px";
+        img.style.border = "2px solid #c77dff";
+        img.style.borderRadius = "10px";
+        img.style.margin = "10px";
+        container.appendChild(img);
+      });
+    })
+    .catch(err => console.error("Listeleme hatası:", err));
+}
+
+// Arama (backend üzerinden)
 function searchDrawing() {
-  const resultsDiv = document.getElementById("searchResults");
-  const grid = document.getElementById("resultsGrid");
+  const query = document.getElementById("searchInput").value.trim();
+  if (!query) {
+    alert("Lütfen bir arama kelimesi girin!");
+    return;
+  }
 
-  resultsDiv.style.display = "block";
-  grid.innerHTML = "";
+  fetch("http://localhost:3000/search?q=" + query)
+    .then(res => res.json())
+    .then(results => {
+      const grid = document.getElementById("resultsGrid");
+      grid.innerHTML = "";
 
-  const demoImages = Array.from({ length: 6 }, (_, i) => ({
-  id: i,
-  url: `https://source.unsplash.com/random/400x400?sig=${Math.random()}`,
-  title: `Demo Görsel ${i+1}`
-}))};
+      if (!results || results.length === 0) {
+        grid.innerHTML = "<p>Sonuç bulunamadı.</p>";
+        return;
+      }
+
+      results.forEach(item => {
+        const img = document.createElement("img");
+        img.src = item.dataURL;
+        img.alt = "Arama sonucu";
+        img.style.width = "180px";
+        img.style.border = "2px solid #ff99cc";
+        img.style.borderRadius = "10px";
+        img.style.margin = "10px";
+        grid.appendChild(img);
+      });
+    })
+    .catch(err => console.error("Arama hatası:", err));
+}
