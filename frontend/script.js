@@ -91,14 +91,14 @@ function saveDrawing() {
 
   const tags = prompt("Bu çizime bir etiket ekle (örn: çiçek, araba):");
 
-  fetch("http://localhost:3000/save", {
+  fetch("https://ai-backend-8p17.onrender.com/save", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ dataURL, tags })
   })
   .then(res => res.json())
   .then(data => {
-    alert(data.message + "\nPaylaşım linki: http://localhost:3000/drawing/" + data.id);
+    alert(data.message + "\nPaylaşım linki: https://ai-backend-8p17.onrender.com/drawings" + data.id);
     window.location.href = "kaydedilenler.html";
   })
   .catch(err => console.error("Kaydetme hatası:", err));
@@ -112,7 +112,7 @@ function clearBoard() {
 
 // Kaydedilenleri yükle (backend'den)
 function loadSavedDrawings() {
-  fetch("http://localhost:3000/drawings")
+ fetch("https://ai-backend-8p17.onrender.com/drawings")
     .then(res => res.json())
     .then(saved => {
       const container = document.getElementById("savedDrawings");
@@ -145,7 +145,7 @@ function searchDrawing() {
     return;
   }
 
-  fetch("http://localhost:3000/search?q=" + query)
+  fetch("https://ai-backend-8p17.onrender.com/search?q=" + query)
     .then(res => res.json())
     .then(results => {
       const grid = document.getElementById("resultsGrid");
